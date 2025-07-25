@@ -37,37 +37,148 @@ git clone https://github.com/flutter/flutter.git -b stable
 ```
 
 **¿Por qué se utiliza el comando `git clone`?**
-Clonar el repositorio en lugar de descargar un archivo comprimido (`.zip`) es la práctica recomendada por una razón clave: **la gestión de versiones**. Al tener el repositorio localmente, actualizar Flutter a una nueva versión es tan simple como ejecutar el comando `flutter upgrade`. Git, el sistema de control de versiones, se encargará de descargar eficientemente solo los archivos que han cambiado, haciendo el proceso de actualización mucho más rápido y seguro.
+Al tener el repositorio localmente, actualizar Flutter a una nueva versión es tan simple como ejecutar el comando `flutter upgrade`. Git, el sistema de control de versiones, se encargará de descargar eficientemente solo los archivos que han cambiado, haciendo el proceso de actualización mucho más rápido y seguro.
 
 ### Paso 2: Configurar la Variable de Entorno `PATH`
 
 Una vez descargado, es necesario indicarle al sistema operativo dónde encontrar los ejecutables de Flutter.
 
-```bash
-# Agregue la siguiente línea al final de su archivo de configuración de terminal
-# (usualmente ~/.bashrc para Bash, o ~/.zshrc para Zsh)
-export PATH="$PATH:/ruta/absoluta/a/su/carpeta/flutter/bin"
+**Nota Previa: ¿Qué terminal (shell) se está usando?**
 
-# Aplique los cambios en la terminal actual para no tener que reiniciarla
-source ~/.bashrc
+Linux utiliza un programa llamado "shell" o intérprete de comandos para interactuar con el usuario. Los más comunes son `Bash` y `Zsh`. Cada uno usa un archivo de configuración diferente. Para saber cuál está en uso, se puede ejecutar el siguiente comando:
+
+```bash
+echo $SHELL
+```
+
+*   Si la salida es `/bin/bash`, el archivo a modificar es `~/.bashrc`.
+*   Si la salida es `/bin/zsh`, el archivo a modificar es `~/.zshrc`.
+
+**Importante: Cómo modificar el archivo de configuración**
+
+El archivo (`~/.bashrc` o `~/.zshrc`) es un fichero de texto, no un programa. **No debe ser ejecutado directamente en la terminal**, ya que eso causa el error `Permission denied` que observaste. Debe ser abierto con un editor de texto para añadirle una línea.
+
+Se puede usar un editor simple de terminal como `nano`:
+
+```bash
+# Opción 1: Si usas Bash
+nano ~/.bashrc
+
+# Opción 2: Si usas Zsh
+nano ~/.zshrc
+```
+
+Una vez abierto el editor, hay que agregar la siguiente línea al **final** del archivo:
+
+```bash
+export PATH="$PATH:/ruta/absoluta/a/su/carpeta/flutter/bin"
 ```
 *(Nota: Reemplace `/ruta/absoluta/a/su/carpeta/flutter/bin` con la ruta real donde clonó el repositorio. Puede obtenerla navegando a la carpeta `flutter/bin` y ejecutando el comando `pwd`)*.
+
+Para guardar los cambios en `nano`, presione `Ctrl+O`, `Enter`, y luego `Ctrl+X` para salir.
+
+Finalmente, para aplicar los cambios en la terminal actual sin necesidad de reiniciarla, se usa el comando `source`:
+
+```bash
+# Opción 1: Si usas Bash
+source ~/.bashrc
+
+# Opción 2: Si usas Zsh
+source ~/.zshrc
+```
 
 **¿Qué es la variable `PATH` y por qué se modifica?**
 La variable `PATH` es una lista de directorios que la terminal de comandos revisa cada vez que se introduce un comando (como `ls`, `git` o, en este caso, `flutter`). Si el sistema no encuentra el ejecutable en ninguna de las carpetas de esa lista, devuelve un error de "comando no encontrado".
 
 Al añadir la ruta de la carpeta `bin` de Flutter al `PATH`, se está registrando esa ubicación como un lugar de confianza para buscar comandos. Esto permite ejecutar comandos como `flutter doctor` desde cualquier directorio en la terminal, lo cual es fundamental para un flujo de trabajo eficiente.
 
-### Paso 3: El Rol de Android Studio (Herramienta Auxiliar)
+**Solución de Problemas Avanzada: El comando `flutter` sigue sin encontrarse**
 
-Aunque el editor de código principal será VSCode, la instalación de **Android Studio** es un paso necesario, no como editor, sino como **gestor de las herramientas de Android**.
+En algunas configuraciones de sistema (como en KDE Neon, entre otros), la terminal puede ser muy estricta y no cargar las variables de entorno de los archivos `.bashrc` o `.profile` como se espera. Si después de intentar los pasos anteriores el comando `flutter` sigue sin funcionar, existe una solución más directa y robusta: crear un enlace simbólico (un "acceso directo").
 
-**¿Para qué se usará Android Studio?**
-1.  **Instalador del SDK de Android**: Flutter lo necesita para construir la versión de Android de la aplicación.
-2.  **Gestor de Emuladores (AVD Manager)**: Proporciona una interfaz gráfica muy cómoda para crear y administrar dispositivos virtuales de Android.
-3.  **Gestor de Licencias**: `flutter doctor` requiere que se acepten las licencias del SDK de Android, y esto se gestiona a través de las herramientas que instala Android Studio.
+Se creará un enlace desde el ejecutable de Flutter a un directorio que el sistema siempre revisa, como `/usr/local/bin`. Para ello, se debe ejecutar el siguiente comando en la terminal. Es importante destacar que este comando requiere privilegios de administrador (`sudo`), por lo que pedirá la contraseña del usuario:
 
-El flujo es: instalar Android Studio, usar su asistente para obtener el SDK de Android y crear un emulador. Después de eso, se puede mantener cerrado y trabajar exclusivamente desde VSCode.
+```bash
+# Reemplace /ruta/absoluta/a/su/carpeta/flutter/bin con la ruta real
+sudo ln -s /ruta/absoluta/a/su/carpeta/flutter/bin/flutter /usr/local/bin/flutter
+```
+
+---
+
+Básicamente hay que agregar un enlace simbólico del ejecutable flutter en **local/bin/**
+
+---
+
+Una vez ejecutado este comando, el sistema siempre sabrá dónde encontrar `flutter`, solucionando el problema de forma permanente.
+
+### Paso 3: El Rol de Android Studio (Instalación Convencional)
+
+Aunque el editor de código principal será VSCode, la instalación de **Android Studio** es un paso necesario. No se usará para escribir código, sino como un **gestor de las herramientas de Android**.
+
+**Nota Importante: El Problema con la Instalación vía Flatpak (Tienda Discover)**
+
+Si se instala Android Studio desde una tienda de software como *Discover*, lo más probable es que se instale una versión *Flatpak*. Las aplicaciones Flatpak se ejecutan en un entorno aislado (sandbox), lo que impide que Flutter encuentre el SDK de Android, causando el error `Unable to locate Android SDK`. Por esta razón, **se recomienda desinstalar la versión de Flatpak y seguir el método de instalación manual que se describe a continuación.**
+
+**Proceso de Instalación Manual (Recomendado)**
+
+1.  **Descargar y Descomprimir**: Descargue el archivo `.tar.gz` desde el [sitio web oficial de Android Studio](https://developer.android.com/studio). una vez descomprimido:
+
+2.  **Mover la Carpeta a un Directorio Permanente (Método Seguro)**: Para mantener el sistema de archivos organizado, es una buena práctica mover la carpeta `android-studio` descomprimida a un directorio permanente. Un lugar estándar para software de terceros en Linux es `/opt/`.
+
+    **Nota de Permisos (¡Muy Importante!)**: Para evitar problemas de permisos, el proceso correcto es:
+    *   **Primero**, descomprimir el archivo `.tar.gz` en una carpeta normal (ej. `~/Descargas`) como usuario regular. Esto asegura que todos los archivos le pertenecen a usted (`neon:neon`).
+    *   **Segundo**, usar `sudo mv` para mover la carpeta ya descomprimida a `/opt/`. A diferencia de otros comandos, `mv` preserva los permisos del propietario original.
+
+    ```bash
+    # 1. Asegúrese de estar en la carpeta donde descargó el archivo
+    # cd ~/Descargas
+
+    # 2. Descomprima el archivo como usuario regular
+    tar -xzf android-studio-*.tar.gz
+
+    # 3. Mueva la carpeta a /opt/ usando sudo. Los permisos se mantendrán.
+    sudo mv android-studio /opt/
+    ```
+    Este método garantiza que, aunque la aplicación resida en un directorio del sistema (`/opt/`), todos sus archivos internos siguen siendo propiedad de su usuario, evitando cualquier problema de lectura o escritura.
+
+3.  **Ejecutar el Asistente de Configuración**: Navegue a la carpeta `bin` dentro del directorio de Android Studio y ejecute el script `studio.sh`.
+    ```bash
+    # Si lo movió a /opt/
+    /opt/android-studio/bin/studio.sh
+
+    # Si no, desde la carpeta donde lo descomprimió
+    ./android-studio/bin/studio.sh
+    ```
+
+4.  **Pasos Dentro del Asistente (¡Esta es la parte clave!)**:
+    *   En la pantalla de bienvenida, seleccione **"Custom"** en lugar de "Standard". Esto le dará control sobre los componentes a instalar.
+    *   En la pantalla "SDK Components Setup", asegúrese de que las siguientes casillas estén **marcadas**:
+        *   **`Android SDK`** (marcado por defecto)
+        *   **`Android SDK Command-line Tools`** (a veces no está marcado por defecto, ¡márquelo!)
+        *   **`Android Virtual Device (AVD)`** (para poder crear emuladores)
+    *   Haga clic en "Next" y "Finish". El asistente descargará e instalará todos los componentes necesarios. Este proceso puede tardar varios minutos.
+
+5.  **Aceptar las Licencias de Android**: Una vez que el asistente termine, cierre Android Studio. Abra una terminal y ejecute `flutter doctor` de nuevo. Ahora, el doctor debería encontrar el SDK, pero se quejará de las licencias. Ejecute el comando que el propio doctor le sugiere:
+    ```bash
+    flutter doctor --android-licenses
+    ```
+    Presione la tecla `y` y `Enter` repetidamente hasta que todas las licencias hayan sido aceptadas.
+
+Después de estos pasos, si ejecuta `flutter doctor` una vez más, la sección del `Android toolchain` debería aparecer con un tic de color verde (`✓`).
+
+---
+
+### Nota Final sobre la Instalación en Linux (Caso Práctico)
+
+En este punto, las instrucciones para la configuración del entorno de desarrollo en Linux finalizan. Durante el proceso de instalación de los componentes del SDK de Android a través del asistente de Android Studio, se ha determinado que el espacio en disco disponible en el equipo es insuficiente para completar la descarga e instalación.
+
+El desarrollo de aplicaciones móviles, especialmente con Android, es intensivo en cuanto a espacio de almacenamiento. El SDK de Android, las imágenes de sistema para los emuladores y las propias herramientas de desarrollo pueden ocupar varias decenas de gigabytes.
+
+Esta situación sirve como una lección práctica importante: **antes de comenzar, es crucial verificar que se cumplen los requisitos del sistema, incluyendo tener suficiente espacio libre en disco.**
+
+Las próximas secciones del tutorial continuarán con la configuración en otros sistemas operativos o explorarán alternativas de desarrollo que no dependan de una instalación local completa, como los entornos en la nube.
+
+---
 
 ### Paso 4: Verificación con `flutter doctor`
 
