@@ -104,24 +104,54 @@ Este paso es fundamental para poder ejecutar los comandos de Flutter desde cualq
 > sudo ln -s /ruta/absoluta/a/flutter/bin/flutter /usr/local/bin/flutter
 > ```
 
-### Paso 3: Instalar Android Studio
+### Paso 3: Instalar y Configurar Android Studio
 
 Aunque el objetivo principal sea el desarrollo web, la instalación de **Android Studio** es un paso muy recomendable, especialmente para la futura fase de desarrollo móvil. No se usará necesariamente para escribir código, sino como un **gestor de las herramientas de Android (SDK, emuladores, etc.)**.
 
-**Proceso de Instalación:**
+**1. Descargar e Instalar Android Studio**
 
-1.  **Descargar**: Obtenga el instalador desde el [sitio web oficial de Android Studio](https://developer.android.com/studio).
-2.  **Instalar**: Ejecute el instalador y siga el asistente.
-    *   **Importante**: Durante la instalación, en la pantalla "SDK Components Setup", asegúrese de que las siguientes casillas estén **marcadas**:
+*   Obtenga el instalador adecuado para su sistema operativo desde el [sitio web oficial de Android Studio](https://developer.android.com/studio).
+*   **En Windows**: Ejecute el instalador `.exe` y siga los pasos iniciales.
+*   **En Linux**: Se recomienda realizar la instalación manual (descargando el `.tar.gz`) para evitar problemas de permisos. Una vez descomprimido, ejecute el script `studio.sh` desde la carpeta `bin`.
+
+**2. Asistente de Configuración Inicial (Primera Ejecución)**
+
+Al ejecutar Android Studio por primera vez (en cualquier sistema operativo), se iniciará un asistente de configuración. Este paso es crucial.
+
+*   En la pantalla de bienvenida, seleccione siempre la opción **"Custom"** (Personalizada) en lugar de "Standard" para tener control sobre la instalación.
+*   **Selección de Componentes**: A continuación, llegará a la pantalla "SDK Components Setup". Las opciones aquí pueden variar ligeramente entre Windows y Linux.
+    *   **En Linux**: Verá una lista más detallada. Asegúrese de que las siguientes casillas estén **marcadas**:
         *   `Android SDK`
         *   `Android SDK Command-line Tools`
-        *   `Android Virtual Device (AVD)` (para poder crear emuladores)
-3.  **Aceptar las Licencias**: Una vez instalado, abra una terminal y ejecute el siguiente comando. Le pedirá aceptar varias licencias; presione `y` y `Enter` hasta que el proceso finalice.
-    ```bash
-    flutter doctor --android-licenses
-    ```
+        *   `Android Virtual Device (AVD)`
+    *   **En Windows**: La vista es más simplificada. `Android SDK` ya estará seleccionado. Asegúrese de marcar adicionalmente:
+        *   `Android Virtual Device`
+        *   `Performance (Android Emulator hypervisor driver)` (recomendado)
+*   **Aceptación de Licencias**: Antes de finalizar, el asistente le presentará una pantalla para aceptar los términos y condiciones de varias licencias de componentes (como `android-sdk-license`, `Android Emulator`, etc.). Asegúrese de aceptar todas las licencias requeridas para continuar.
+*   Finalmente, haga clic en "Finish" para que el asistente descargue e instale todos los componentes seleccionados.
 
-> **Nota para usuarios de Linux**: Se recomienda encarecidamente realizar la instalación manual de Android Studio (descargando el `.tar.gz`) en lugar de usar gestores de paquetes como Flatpak (desde tiendas como Discover). Las versiones de Flatpak se ejecutan en un entorno aislado que puede impedir que Flutter localice correctamente el SDK de Android.
+**3. Configurar la Ruta del SDK de Android para Flutter**
+
+Este es un paso fundamental. Aunque Android Studio esté instalado, Flutter necesita saber exactamente dónde se encuentra el SDK de Android. Si al ejecutar `flutter doctor --android-licenses` aparece el error `Unable to locate Android SDK`, siga estos pasos:
+
+1.  Abra Android Studio.
+2.  Vaya al menú **Tools > SDK Manager**.
+3.  En la parte superior de la ventana, copie la ruta que aparece en **"Android SDK Location"**. (Ej: `C:\Users\SuUsuario\AppData\Local\Android\Sdk`).
+4.  Abra una nueva terminal (PowerShell o CMD en Windows, Bash/Zsh en Linux) y ejecute el siguiente comando, reemplazando `"ruta\completa\al\sdk"` con la ruta que copió:
+    ```bash
+    flutter config --android-sdk "ruta\completa\al\sdk"
+    ```
+5.  Vuelva a ejecutar `flutter doctor`. El error del Android toolchain debería haber desaparecido.
+
+**4. Verificación de Licencias (Paso Final)**
+
+Aunque las licencias principales se aceptan en el asistente de Android Studio, es una buena práctica verificar que todo esté correctamente configurado para Flutter. En una terminal, ejecute:
+
+```bash
+flutter doctor --android-licenses
+```
+
+Si todas las licencias ya fueron aceptadas, lo confirmará. Si quedara alguna pendiente, le permitirá aceptarla aquí. 
 
 ### Paso 4: Verificación Final
 
@@ -132,6 +162,53 @@ flutter doctor
 ```
 
 Siga sus instrucciones para resolver cualquier problema pendiente. Cuando todas las secciones principales muestren un tic verde (`✓`), el entorno estará listo.
+
+## Bitácora de Resolución de Problemas (En Progreso)
+
+Esta sección documenta los problemas encontrados durante la configuración real del entorno y sus soluciones, mostrando el estado de `flutter doctor` antes y después de cada corrección. La versión de Android Studio utilizada es **Build #AI-251.25410.109.2511.13752376 (2025.1.1)**, lanzada el 8 de Julio de 2025.
+
+### 1. `cmdline-tools component is missing`
+
+**Síntoma:**
+
+Después de instalar Android Studio y configurar la ruta del SDK con `flutter config --android-sdk`, el comando `flutter doctor` arrojaba el siguiente estado:
+
+```text
+[✓] Flutter (...)
+[✓] Windows Version (...)
+[!] Android toolchain - develop for Android devices (Android SDK version 36.0.0)
+    ✗ cmdline-tools component is missing.
+      Try installing or updating Android Studio.
+      (...)
+    ✗ Android license status unknown.
+      Run `flutter doctor --android-licenses` to accept the SDK licenses.
+      (...)
+[✗] Chrome (...)
+[✗] Visual Studio (...)
+[✓] Android Studio (version 2025.1.1)
+[✓] VS Code (...)
+[✓] Connected device (...)
+[✓] Network resources
+
+! Doctor found issues in 3 categories.
+```
+
+**Diagnóstico:**
+
+El error principal es `cmdline-tools component is missing`. Indica que, aunque Flutter encuentra el SDK de Android, le falta un sub-componente esencial: las herramientas de línea de comandos, necesarias para compilar y gestionar proyectos.
+
+**Solución:**
+
+El componente debe instalarse manualmente desde el SDK Manager de Android Studio. La ubicación de esta opción puede variar según la versión del IDE.
+
+1.  Se abre Android Studio.
+2.  Se navega al menú: **File > Settings...** (o `Ctrl+Alt+S`).
+3.  En el panel izquierdo de la ventana de `Settings`, se selecciona **Languages & Frameworks > Android SDK**.
+4.  En el panel derecho, se hace clic en la pestaña **"SDK Tools"**.
+5.  Se busca y se marca la casilla **"Android SDK Command-line Tools (latest)"**.
+6.  Se presiona **"Apply"** y luego **"OK"** para que Android Studio descargue e instale el componente.
+
+*(Esta sección se actualizará con el resultado de `flutter doctor` una vez que se confirme la solución.)*
 
 ## Herramientas de Desarrollo
 
