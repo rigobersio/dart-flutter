@@ -163,7 +163,7 @@ flutter doctor
 
 Siga sus instrucciones para resolver cualquier problema pendiente. Cuando todas las secciones principales muestren un tic verde (`✓`), el entorno estará listo.
 
-## Bitácora de Resolución de Problemas (En Progreso)
+## Bitácora de Resolución de Problemas (Finalizada para Android)
 
 Esta sección documenta los problemas encontrados durante la configuración real del entorno y sus soluciones, mostrando el estado de `flutter doctor` antes y después de cada corrección. La versión de Android Studio utilizada es **Build #AI-251.25410.109.2511.13752376 (2025.1.1)**, lanzada el 8 de Julio de 2025.
 
@@ -171,18 +171,77 @@ Esta sección documenta los problemas encontrados durante la configuración real
 
 **Síntoma:**
 
-Después de instalar Android Studio y configurar la ruta del SDK con `flutter config --android-sdk`, el comando `flutter doctor` arrojaba el siguiente estado:
+Después de instalar Android Studio y configurar la ruta del SDK, `flutter doctor` arrojaba el error `cmdline-tools component is missing`.
+
+**Solución:**
+
+Se instaló el componente **"Android SDK Command-line Tools (latest)"** manualmente desde el SDK Manager de Android Studio (`File > Settings... > Languages & Frameworks > Android SDK > SDK Tools`).
+
+**Resultado (Post-Solución):**
+
+El error de `cmdline-tools` desapareció, dejando únicamente la advertencia sobre las licencias:
+
+```text
+[!] Android toolchain - develop for Android devices (Android SDK version 36.0.0)
+    ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
+```
+
+### 2. `Some Android licenses not accepted`
+
+**Síntoma:**
+
+El siguiente paso, como lo indicaba el propio `flutter doctor`, era resolver el tema de las licencias.
+
+**Solución:**
+
+Se ejecutó el comando `flutter doctor --android-licenses` y se aceptaron todas las licencias propuestas.
+
+**Resultado Final (Android Toolchain ✓):**
+
+Tras aceptar las licencias, la sección `Android toolchain` finalmente aparece con el tic de verificación verde, indicando que la configuración para el desarrollo de Android está completa y es correcta.
+
+```text
+[✓] Flutter (Channel stable, 3.32.7, on Microsoft Windows [Versi¢n 10.0.22631.5549], locale es-CL)
+[✓] Windows Version (11 Pro 64 bits, 23H2, 2009)
+[✓] Android toolchain - develop for Android devices (Android SDK version 36.0.0)
+[✗] Chrome - develop for the web (Cannot find Chrome executable at .\Google\Chrome\Application\chrome.exe)
+    ! Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome executable.
+[✗] Visual Studio - develop Windows apps
+    (...)
+[✓] Android Studio (version 2025.1.1)
+[✓] VS Code (version 1.102.2)
+[✓] Connected device (2 available)
+[✓] Network resources
+
+! Doctor found issues in 2 categories.
+```
+
+## Siguientes Pasos: Enfocándonos en el Desarrollo Web
+
+¡Excelente! La configuración para el desarrollo de Android (`Android toolchain`) está completa. Ahora podemos enfocarnos en nuestro objetivo principal: **el desarrollo de aplicaciones web con Dart y Flutter**.
+
+El diagnóstico de `flutter doctor` nos indica claramente cuál es el siguiente paso:
+
+`[✗] Chrome - develop for the web (Cannot find Chrome executable ...)`
+
+Para poder desarrollar y depurar aplicaciones web de Flutter, es necesario tener Google Chrome instalado.
+
+**Acciones a realizar:**
+
+1.  **Instalar Google Chrome**: Si no está instalado, la solución más sencilla es descargar e instalar Google Chrome desde su [página oficial](https://www.google.com/chrome/). Flutter lo detectará automáticamente en la próxima ejecución de `flutter doctor`.
+2.  **Configurar la ruta (si Chrome ya está instalado)**: Si Chrome está instalado en una ubicación no estándar, se debe indicar la ruta a su ejecutable (`chrome.exe`) mediante una variable de entorno llamada `CHROME_EXECUTABLE`.
+
+El error referente a `Visual Studio` puede ser ignorado por ahora, ya que es un requisito exclusivo para compilar aplicaciones de escritorio para Windows, lo cual no es nuestro foco actual.
+
+**Resultado (Post-Solución):**
+
+Tras instalar las `Command-line Tools`, el resultado de `flutter doctor` mejoró significativamente, eliminando el error principal y dejando únicamente la advertencia sobre las licencias:
 
 ```text
 [✓] Flutter (...)
 [✓] Windows Version (...)
 [!] Android toolchain - develop for Android devices (Android SDK version 36.0.0)
-    ✗ cmdline-tools component is missing.
-      Try installing or updating Android Studio.
-      (...)
-    ✗ Android license status unknown.
-      Run `flutter doctor --android-licenses` to accept the SDK licenses.
-      (...)
+    ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
 [✗] Chrome (...)
 [✗] Visual Studio (...)
 [✓] Android Studio (version 2025.1.1)
@@ -193,22 +252,25 @@ Después de instalar Android Studio y configurar la ruta del SDK con `flutter co
 ! Doctor found issues in 3 categories.
 ```
 
+### 2. `Some Android licenses not accepted`
+
+**Síntoma:**
+
+El siguiente paso natural, como lo indica el propio `flutter doctor`, es resolver el tema de las licencias.
+
 **Diagnóstico:**
 
-El error principal es `cmdline-tools component is missing`. Indica que, aunque Flutter encuentra el SDK de Android, le falta un sub-componente esencial: las herramientas de línea de comandos, necesarias para compilar y gestionar proyectos.
+Con las `Command-line Tools` ya instaladas, Flutter ahora tiene la capacidad de gestionar las licencias del SDK de Android, pero requiere la aceptación explícita del usuario.
 
 **Solución:**
 
-El componente debe instalarse manualmente desde el SDK Manager de Android Studio. La ubicación de esta opción puede variar según la versión del IDE.
+1.  Se ejecuta el comando sugerido en la terminal:
+    ```bash
+    flutter doctor --android-licenses
+    ```
+2.  El sistema pide revisar y aceptar (con la tecla `y`) varias licencias de forma consecutiva.
 
-1.  Se abre Android Studio.
-2.  Se navega al menú: **File > Settings...** (o `Ctrl+Alt+S`).
-3.  En el panel izquierdo de la ventana de `Settings`, se selecciona **Languages & Frameworks > Android SDK**.
-4.  En el panel derecho, se hace clic en la pestaña **"SDK Tools"**.
-5.  Se busca y se marca la casilla **"Android SDK Command-line Tools (latest)"**.
-6.  Se presiona **"Apply"** y luego **"OK"** para que Android Studio descargue e instale el componente.
-
-*(Esta sección se actualizará con el resultado de `flutter doctor` una vez que se confirme la solución.)*
+*(Esta sección se actualizará con el resultado final de `flutter doctor`.)*
 
 ## Herramientas de Desarrollo
 
