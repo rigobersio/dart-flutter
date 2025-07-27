@@ -240,6 +240,22 @@ Como alternativa, se estarán probando los siguientes editores:
 * **JetBrains Fleet**: Un editor de nueva generación que también ofrece un excelente soporte para Dart y Flutter.
 * **Trae 2.0**: (Se agregará más información sobre esta herramienta a medida que se explore).
 
+### Experiencia con Editores
+
+*   **JetBrains Fleet (Evaluación Inicial):**
+    *   **Positivo:** La previsualización de archivos `.md` es excelente.
+    *   **Negativo:** El consumo de memoria RAM es considerable. Para un proyecto en esta etapa inicial, no se perciben ventajas significativas que justifiquen el uso de recursos. La integración con IA es una característica de pago.
+    *   **Conclusión Parcial:** Se siente como un editor de texto potente (similar a Sublime Text con más funcionalidades) pero, por ahora, no aporta un valor diferencial clave. Se procederá a probar **Trae 2.0** y se investigará la posibilidad de mejorar el visor de Markdown en otros editores si fuera necesario.
+
+### Comparativa de Editores (en progreso)
+
+| Característica | VS Code | JetBrains Fleet | Trae 2.0 |
+| :--- | :---: | :---: | :---: |
+| **Consumo de RAM** | Bajo | Alto | *Pendiente* |
+| **Previsualización MD** | Buena (con extensiones) | Excelente | *Pendiente* |
+| **Soporte Flutter** | Excelente | Bueno | *Pendiente* |
+| **IA Integrada** | Sí (Copilot, etc.) | Sí (de pago) | *Pendiente* |
+
 ### Opciones para Probar la Aplicación
 
 Para la fase de desarrollo móvil, existen varias formas de probar una aplicación:
