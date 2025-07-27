@@ -220,57 +220,15 @@ Tras aceptar las licencias, la sección `Android toolchain` finalmente aparece c
 
 ¡Excelente! La configuración para el desarrollo de Android (`Android toolchain`) está completa. Ahora podemos enfocarnos en nuestro objetivo principal: **el desarrollo de aplicaciones web con Dart y Flutter**.
 
-El diagnóstico de `flutter doctor` nos indica claramente cuál es el siguiente paso:
+El diagnóstico de `flutter doctor` nos indica una advertencia sobre Chrome:
 
 `[✗] Chrome - develop for the web (Cannot find Chrome executable ...)`
 
-Para poder desarrollar y depurar aplicaciones web de Flutter, es necesario tener Google Chrome instalado.
+**Decisión sobre el Navegador:**
 
-**Acciones a realizar:**
+Aunque Flutter busca Google Chrome por defecto, no es un requisito indispensable. Se puede utilizar cualquier navegador moderno basado en Chromium (como Brave, Opera o Ecosia). Para que Flutter utilice un navegador alternativo, simplemente se debe configurar la variable de entorno `CHROME_EXECUTABLE` para que apunte a la ruta del ejecutable de dicho navegador.
 
-1.  **Instalar Google Chrome**: Si no está instalado, la solución más sencilla es descargar e instalar Google Chrome desde su [página oficial](https://www.google.com/chrome/). Flutter lo detectará automáticamente en la próxima ejecución de `flutter doctor`.
-2.  **Configurar la ruta (si Chrome ya está instalado)**: Si Chrome está instalado en una ubicación no estándar, se debe indicar la ruta a su ejecutable (`chrome.exe`) mediante una variable de entorno llamada `CHROME_EXECUTABLE`.
-
-El error referente a `Visual Studio` puede ser ignorado por ahora, ya que es un requisito exclusivo para compilar aplicaciones de escritorio para Windows, lo cual no es nuestro foco actual.
-
-**Resultado (Post-Solución):**
-
-Tras instalar las `Command-line Tools`, el resultado de `flutter doctor` mejoró significativamente, eliminando el error principal y dejando únicamente la advertencia sobre las licencias:
-
-```text
-[✓] Flutter (...)
-[✓] Windows Version (...)
-[!] Android toolchain - develop for Android devices (Android SDK version 36.0.0)
-    ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
-[✗] Chrome (...)
-[✗] Visual Studio (...)
-[✓] Android Studio (version 2025.1.1)
-[✓] VS Code (...)
-[✓] Connected device (...)
-[✓] Network resources
-
-! Doctor found issues in 3 categories.
-```
-
-### 2. `Some Android licenses not accepted`
-
-**Síntoma:**
-
-El siguiente paso natural, como lo indica el propio `flutter doctor`, es resolver el tema de las licencias.
-
-**Diagnóstico:**
-
-Con las `Command-line Tools` ya instaladas, Flutter ahora tiene la capacidad de gestionar las licencias del SDK de Android, pero requiere la aceptación explícita del usuario.
-
-**Solución:**
-
-1.  Se ejecuta el comando sugerido en la terminal:
-    ```bash
-    flutter doctor --android-licenses
-    ```
-2.  El sistema pide revisar y aceptar (con la tecla `y`) varias licencias de forma consecutiva.
-
-*(Esta sección se actualizará con el resultado final de `flutter doctor`.)*
+Por decisión del proyecto, **no se instalará Google Chrome** y se utilizarán los navegadores existentes para mantener el entorno de desarrollo limpio. El error de `Visual Studio` puede ser ignorado, ya que es un requisito para compilar aplicaciones de escritorio para Windows, lo cual no es el foco actual.
 
 ## Herramientas de Desarrollo
 
@@ -278,7 +236,9 @@ Con las `Command-line Tools` ya instaladas, Flutter ahora tiene la capacidad de 
 
 Se recomienda **Visual Studio Code (VS Code)** por su ligereza, rapidez y su potente ecosistema de extensiones. La extensión oficial de **Flutter** (publicada por `Dart Code`) es indispensable.
 
-Como alternativa, **JetBrains Fleet** es un editor de nueva generación que también ofrece un excelente soporte para Dart y Flutter.
+Como alternativa, se estarán probando los siguientes editores:
+* **JetBrains Fleet**: Un editor de nueva generación que también ofrece un excelente soporte para Dart y Flutter.
+* **Trae 2.0**: (Se agregará más información sobre esta herramienta a medida que se explore).
 
 ### Opciones para Probar la Aplicación
 
@@ -287,3 +247,9 @@ Para la fase de desarrollo móvil, existen varias formas de probar una aplicaci�
 1.  **Emulador Local**: Un dispositivo Android virtual que se ejecuta en el ordenador. Se crea y gestiona desde el AVD Manager de Android Studio. Es ideal para pruebas rápidas.
 2.  **Dispositivo Físico**: Conectar un teléfono o tableta real vía USB. Es la forma más fiable de probar el rendimiento y comportamiento real de la aplicación. Requiere activar la "Depuración por USB" en las opciones de desarrollador del dispositivo.
 3.  **Entorno en la Nube (Firebase)**: Servicios como Firebase Test Lab permiten probar la aplicación en una amplia gama de dispositivos virtuales en la nube, ahorrando recursos locales y facilitando las pruebas automatizadas.
+
+## Proyectos
+
+### flutter_grandparents_v??
+
+Se ha iniciado un proyecto práctico para aplicar los conocimientos de Dart y Flutter. Toda la información, objetivos y metodología de este proyecto se encuentran detallados en la **[Bitácora del Proyecto](./BITACORA_DEL_PROYECTO.md)**.
