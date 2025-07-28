@@ -3,23 +3,9 @@
 /// La importación de 'material.dart' nos da acceso a un enorme catálogo de Widgets pre-diseñados que siguen las guías de diseño de Material Design de Google.
 import 'package:flutter/material.dart';
 
-// Importaciones necesarias para Firebase.
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Importa las credenciales de Firebase generadas.
-
 /// La función `main()` es el punto de entrada de toda la aplicación, al igual que en muchos otros lenguajes de programación.
 /// Flutter comienza a ejecutar el código desde aquí.
-void main() async { // Se convierte en 'async' para poder usar 'await'.
-  // Asegura que el "puente" de comunicación con la plataforma nativa esté listo.
-  // Es obligatorio para poder llamar a Firebase.initializeApp().
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Inicializa Firebase usando las credenciales del archivo firebase_options.dart.
-  // 'await' pausa la ejecución hasta que Firebase esté listo.
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+void main() {
   // `runApp()` es la función que toma el Widget raíz de nuestra aplicación y lo "infla", es decir, lo dibuja en la pantalla.
   // Aquí, le estamos diciendo a Flutter que el widget principal de nuestra app es una instancia de la clase `MyApp`.
   runApp(const MyApp());

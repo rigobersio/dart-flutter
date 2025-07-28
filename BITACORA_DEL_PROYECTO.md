@@ -124,49 +124,47 @@ La conexión del proyecto local de Flutter con el proyecto recién creado en Fir
 
 #### Integración de Autenticación con Google en Flutter
 
-Una vez configurada la conexión básica, el enfoque se centró en la autenticación de usuarios, específicamente utilizando Google Sign-In.
+Una vez configurada la conexión básica con Firebase, el siguiente paso fue implementar un flujo de autenticación completo usando Google Sign-In. Este proceso se dividió en tres grandes bloques conceptuales para facilitar el aprendizaje: la gestión del estado, el diseño de la interfaz y la lógica de interacción.
 
-1.  **Añadir Dependencias de Firebase a `pubspec.yaml`:**
-    Para que la aplicación Flutter pueda interactuar con los servicios de Firebase, es necesario añadir los paquetes (dependencias) correspondientes al archivo `pubspec.yaml`. Este archivo es el manifiesto del proyecto Flutter y define sus metadatos, dependencias y activos.
-    *   **Dependencias necesarias:**
-        *   `firebase_core`: Es el paquete principal de Firebase para Flutter y es necesario para inicializar cualquier otro servicio de Firebase.
-        *   `firebase_auth`: Proporciona la funcionalidad para la autenticación de usuarios.
-        *   `google_sign_in`: Permite la integración con el inicio de sesión de Google.
-    *   **Proceso de adición de dependencias:**
-        Existen dos métodos principales para añadir dependencias:
-        1.  **Edición manual de `pubspec.yaml` y `flutter pub get`:**
-            Se abre el archivo `pubspec.yaml` y, bajo la sección `dependencies:`, se añaden las dependencias con sus versiones deseadas. Por ejemplo:
-            ```yaml
-            dependencies:
-              flutter:
-                sdk: flutter
-              firebase_core: ^2.x.x # Usar la última versión compatible
-              firebase_auth: ^4.x.x # Usar la última versión compatible
-              google_sign_in: ^6.x.x # Usar la última versión compatible
-            ```
-            Después de guardar los cambios en `pubspec.yaml`, se debe ejecutar el comando `flutter pub get` en la terminal desde la raíz del proyecto. Este comando descarga los paquetes especificados y los hace disponibles para el proyecto.
-        2.  **Uso del comando `flutter pub add`:**
-            Este es el método recomendado y más sencillo. Desde la terminal en la raíz del proyecto, se ejecuta el comando `flutter pub add` seguido del nombre del paquete. Por ejemplo:
-            ```bash
-            flutter pub add firebase_core
-            flutter pub pub add firebase_auth
-            flutter pub add google_sign_in
-            ```
-            Este comando automáticamente añade la última versión compatible del paquete a `pubspec.yaml` y ejecuta `flutter pub get` de forma implícita.
+##### 1. Gestión de Estado y Navegación: El "Guardián de Autenticación"
 
-2.  **Inicialización de Firebase en la Aplicación Flutter:**
-    *   La inicialización de Firebase se realizó en la función `main()` de `lib/main.dart`, asegurando que `WidgetsFlutterBinding.ensureInitialized()` se llamara antes de `Firebase.initializeApp()`.
+El primer desafío fue resolver cómo la aplicación debía decidir qué pantalla mostrar: la de inicio de sesión o la página principal. Se optó por un enfoque reactivo, donde la UI reacciona automáticamente a los cambios en el estado de autenticación del usuario.
 
-3.  **Implementación de Google Sign-In:**
-    *   Se implementó una lógica para manejar el flujo de inicio de sesión con Google. Esto implicó el uso de `GoogleSignIn` para obtener las credenciales del usuario y luego `FirebaseAuth` para autenticar esas credenciales con Firebase.
-    *   La gestión de errores se realiza mediante bloques `try-catch` que capturan excepciones específicas proporcionadas por los SDK de `firebase_auth` y `google_sign_in`. Estos SDK están diseñados para manejar de forma segura el intercambio de tokens y la comunicación con los servicios de autenticación de Google y Firebase, delegando la complejidad de la seguridad a la plataforma.
+*   **El Widget `StreamBuilder`:** Se descubrió que la herramienta perfecta para este trabajo es el widget `StreamBuilder`. Este widget se conecta a un `Stream` (un flujo de datos asíncrono) y se reconstruye a sí mismo cada vez que el stream emite un nuevo valor.
+*   **El Stream `authStateChanges()`:** El paquete `firebase_auth` proporciona un stream muy conveniente: `FirebaseAuth.instance.authStateChanges()`. Este stream emite un objeto `User` cuando el usuario inicia sesión y emite `null` cuando cierra sesión. Es el pulso constante del estado de autenticación de la aplicación.
+*   **Implementación del Guardián (`AuthGate`):** Se creó un widget `StatelessWidget` llamado `AuthGate`. Su único propósito es contener un `StreamBuilder` que escucha a `authStateChanges()`.
+    *   **Lógica del `StreamBuilder`:**
+        1.  Si el `snapshot` (la instantánea del stream) está esperando el primer dato, se muestra un indicador de carga (`CircularProgressIndicator`).
+        2.  Si el `snapshot` tiene datos (`snapshot.hasData` es `true`), significa que el usuario está autenticado. El `StreamBuilder` devuelve la `HomeView`.
+        3.  Si el `snapshot` no tiene datos (`snapshot.hasData` es `false`), el usuario no está autenticado. El `StreamBuilder` devuelve la `LoginView`.
+*   **Nota Pedagógica (Reactividad vs. Imperatividad):** Este patrón es el corazón de una aplicación Flutter bien estructurada. En lugar de navegar de forma imperativa (ej. `if (user) { Navigator.push(...) }`), se define de forma declarativa qué se debe mostrar para cada estado posible. El `StreamBuilder` se encarga de la "navegación" o, más precisamente, de la reconstrucción de la UI, de forma automática y segura. Esto previene que un usuario pueda llegar a la `HomeView` sin estar autenticado.
 
-4.  **Gestión del Estado de Autenticación:**
-    *   La aplicación reacciona a los cambios en el estado de autenticación del usuario (logueado, deslogueado). Esto se logra escuchando los cambios en `FirebaseAuth.instance.authStateChanges()`.
-    *   La seguridad de la gestión del estado recae en la robustez del SDK de Firebase Auth, que proporciona un flujo seguro de tokens de autenticación y refresco, asegurando que la sesión del usuario se mantenga de forma protegida.
+##### 2. Diseño de la Interfaz de Usuario (UI): Las Vistas
 
-5.  **Diseño de la Interfaz de Usuario (UI):**
-    *   **Vista de Inicio de Sesión (Login View)**
-    *   **Vista Principal (Home View)**
+Con la lógica de navegación resuelta, el siguiente paso fue diseñar las dos pantallas que el `AuthGate` mostraría.
 
-6.  **Flujo de Navegación:**
+*   **`LoginView` (Vista de Inicio de Sesión):**
+    *   **Estructura:** Se construyó usando un `Scaffold` para la estructura básica de la pantalla. En el `body`, se usó un widget `Center` para contener un `ElevatedButton` (un botón con sombra).
+    *   **Contenido:** El botón muestra el texto "Iniciar sesión con Google".
+    *   **Interacción:** La propiedad `onPressed` del botón se conectó a la función que ejecuta la lógica de inicio de sesión.
+
+*   **`HomeView` (Vista Principal):**
+    *   **Estructura:** También se usó un `Scaffold`. Se le añadió un `AppBar` (la barra superior) con un título.
+    *   **Contenido:** En el `body`, se mostró un mensaje de bienvenida y se accedió a la información del usuario (como `user.email` o `user.displayName`) para personalizar el saludo. El objeto `User` se pasó como parámetro desde el `AuthGate` a la `HomeView`.
+    *   **Interacción:** En el `AppBar`, se añadió un `IconButton` (un botón de icono) en la sección `actions`. Este botón, con un icono de `logout`, se conectó a la función de cierre de sesión.
+
+##### 3. Lógica de Autenticación: La Acción
+
+Finalmente, se implementó el código que se ejecuta cuando el usuario interactúa con los botones.
+
+*   **Función `_signInWithGoogle()`:**
+    1.  Se utilizó el paquete `google_sign_in` para iniciar el flujo de autenticación de Google (`GoogleSignIn().signIn()`). Esto abre el pop-up de selección de cuenta de Google.
+    2.  Si el usuario selecciona una cuenta, se obtienen los tokens de autenticación de Google.
+    3.  Estos tokens se usan para crear una `OAuthCredential` de Firebase.
+    4.  Finalmente, se llama a `FirebaseAuth.instance.signInWithCredential(credential)` para autenticar al usuario en Firebase. En este punto, el stream `authStateChanges()` automáticamente emite el nuevo objeto `User`, y el `AuthGate` reconstruye la UI para mostrar la `HomeView`.
+
+*   **Función `_signOut()`:**
+    1.  Se llamó a `FirebaseAuth.instance.signOut()` para cerrar la sesión en Firebase. Esto hace que `authStateChanges()` emita `null`.
+    2.  Adicionalmente, se llamó a `GoogleSignIn().signOut()` para asegurar que la cuenta de Google también se desconecte, de modo que la próxima vez que el usuario inicie sesión, se le pida de nuevo que elija una cuenta.
+
+*   **Nota Pedagógica (Manejo de Errores):** Todo el proceso de inicio de sesión se envolvió en un bloque `try-catch`. Esto es crucial para manejar escenarios donde el usuario cierra el pop-up, no tiene conexión a internet, o la autenticación falla por alguna otra razón, evitando que la aplicación se bloquee.

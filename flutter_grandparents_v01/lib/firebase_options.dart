@@ -46,7 +46,7 @@ import 'package:flutter/foundation.dart'
 ///   runApp(const MyApp());
 /// }
 /// ```
-class DefaultFirebaseOptions {
+class DefaultFirebaseOptions { // **OJO ACÁ QUE ESTO SE OCUPA EN MAIN.DART**
   /// Getter 'currentPlatform': Devuelve las opciones de Firebase para la plataforma actual.
   ///
   /// Este método es crucial porque permite que tu código sea agnóstico a la plataforma
