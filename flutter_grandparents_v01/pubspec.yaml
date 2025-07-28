@@ -35,6 +35,9 @@ dependencies:
   # Lo siguiente agrega la fuente de iconos de Cupertino a tu aplicación.
   # Úsala con la clase CupertinoIcons para iconos de estilo iOS.
   cupertino_icons: ^1.0.8
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.0
+  google_sign_in: ^7.1.1
 
 dev_dependencies:
   flutter_test:

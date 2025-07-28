@@ -72,12 +72,12 @@ Este paso es fundamental para poder ejecutar los comandos de Flutter desde cualq
 
 #### En Windows
 
-1.  Cree una carpeta en la raíz del disco, por ejemplo: `C:lutter`.
-2.  Extraiga el contenido del SDK (ya sea del ZIP descargado o de la carpeta clonada con Git) dentro de `C:lutter`.
+1.  Cree una carpeta en la raíz del disco, por ejemplo: `C:\014lutter`.
+2.  Extraiga el contenido del SDK (ya sea del ZIP descargado o de la carpeta clonada con Git) dentro de `C:\014lutter`.
 3.  En el menú de inicio, busque "Editar las variables de entorno del sistema" y ábralo.
 4.  Haga clic en "Variables de entorno...".
 5.  En la sección "Variables de usuario", seleccione la variable `Path` y haga clic en "Editar...".
-6.  Haga clic en "Nuevo" y añada la ruta a la carpeta `bin` de Flutter: `C:lutterin`.
+6.  Haga clic en "Nuevo" y añada la ruta a la carpeta `bin` de Flutter: `C:\014lutter\010in`.
 7.  Haga clic en "Aceptar" en todas las ventanas para guardar los cambios.
 
 #### En Linux
@@ -269,3 +269,28 @@ Para la fase de desarrollo móvil, existen varias formas de probar una aplicaci�
 ### flutter_grandparents_v??
 
 Se ha iniciado un proyecto práctico para aplicar los conocimientos de Dart y Flutter. Toda la información, objetivos y metodología de este proyecto se encuentran detallados en la **[Bitácora del Proyecto](./BITACORA_DEL_PROYECTO.md)**.
+
+## Instalación de Dependencias
+
+En un proyecto Flutter, las dependencias (paquetes externos que añaden funcionalidad) se gestionan a través del archivo `pubspec.yaml`.
+
+Para añadir una dependencia, se puede editar manualmente el archivo `pubspec.yaml` bajo la sección `dependencies:` y luego ejecutar `flutter pub get` en la terminal. Alternativamente, y de forma más sencilla, se puede usar el comando `flutter pub add <nombre_paquete>`.
+
+**Ejemplo de dependencias de Firebase utilizadas en este proyecto:**
+
+```bash
+flutter pub add firebase_core
+flutter pub add firebase_auth
+flutter pub add google_sign_in
+```
+
+Estos comandos añadirán automáticamente las últimas versiones compatibles de los paquetes `firebase_core`, `firebase_auth` y `google_sign_in` a tu `pubspec.yaml` y descargarán las dependencias.
+
+## Herramientas CLI para Firebase
+
+Para la integración con Firebase, se utilizan principalmente dos herramientas de línea de comandos (CLI):
+
+*   **Firebase CLI (`firebase-tools`):** La CLI oficial de Firebase, utilizada para interactuar directamente con los servicios de Firebase (despliegue, gestión de proyectos, etc.). Se instala generalmente a través de `npm`.
+*   **FlutterFire CLI (`flutterfire_cli`):** Una extensión de la Firebase CLI diseñada específicamente para simplificar la configuración de Firebase en proyectos Flutter, automatizando la generación de archivos de configuración y la vinculación de la aplicación con el proyecto Firebase. Se instala a través de `dart pub global activate`.
+
+Para una explicación detallada sobre la instalación, configuración y resolución de problemas de estas herramientas, consulta la sección "v0.1 - Conexión a Firebase y Autenticación" en la **[Bitácora del Proyecto](./BITACORA_DEL_PROYECTO.md)**.

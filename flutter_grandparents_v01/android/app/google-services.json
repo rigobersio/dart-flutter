@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "769202345694",
+    "project_id": "grandparents-5aa59",
+    "storage_bucket": "grandparents-5aa59.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769202345694:android:eb915853fc84a7c8f7544f",
+        "android_client_info": {
+          "package_name": "com.example.flutter_grandparents_v00"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769202345694-aqftd4mmm123gi7e5v1kl33ete7mq4mu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA36eSAWSUMTh3WPnsBT_tOMpPADcktRos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769202345694-aqftd4mmm123gi7e5v1kl33ete7mq4mu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
